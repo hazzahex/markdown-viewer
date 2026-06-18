@@ -1,0 +1,19 @@
+# Generated Xcode project (regenerate with: xcodegen generate)
+*.xcodeproj
+*.xcworkspace
+
+# Build output
+build*/
+DerivedData/
+.swiftpm/
+.build/
+
+# Claude Code harness
+.claude/
+
+# macOS
+.DS_Store
+
+# User/IDE
+xcuserdata/
+*.xcuserstate

@@ -1,0 +1,128 @@
+name: MarkdownViewer
+
+options:
+  bundleIdPrefix: com.hazzahex
+  deploymentTarget:
+    iOS: "18.0"
+  createIntermediateGroups: true
+  groupSortPosition: top
+
+packages:
+  MarkdownRenderer:
+    path: Packages/MarkdownRenderer
+
+settings:
+  base:
+    MARKETING_VERSION: "0.1"
+    CURRENT_PROJECT_VERSION: "1"
+    CODE_SIGN_STYLE: Automatic
+    DEVELOPMENT_TEAM: 3Z822A3R56
+    SWIFT_VERSION: "5.0"
+
+targets:
+  MarkdownViewer:
+    type: application
+    platform: iOS
+    sources:
+      - App/Sources
+      - path: SampleContent/kitchen-sink.md
+        buildPhase: resources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.hazzahex.MarkdownViewer
+        GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+    info:
+      path: App/Info.plist
+      properties:
+        CFBundleDisplayName: Markdown Viewer
+        UILaunchScreen: {}
+        ITSAppUsesNonExemptEncryption: false
+        # Expose the app's Documents in Files (On My iPhone) so we can drop a
+        # .md in and verify the Thumbnail extension renders its grid icon.
+        UIFileSharingEnabled: true
+        LSSupportsOpeningDocumentsInPlace: true
+        # Register the app as a Viewer of markdown so it appears in "Open With".
+        CFBundleDocumentTypes:
+          - CFBundleTypeName: Markdown Document
+            CFBundleTypeRole: Viewer
+            LSHandlerRank: Alternate
+            LSItemContentTypes:
+              - net.daringfireball.markdown
+        # Import (do not own) the de-facto markdown UTI, conforming to plain-text.
+        # NOTE (Spike 0 finding): on iOS this means the Files PREVIEW pane always
+        # uses the built-in text viewer and never our QL preview extension — that
+        # is an unavoidable iOS rule for text-conforming types. The native-feel
+        # path on iOS is the Thumbnail extension + the in-app reader instead.
+        UTImportedTypeDeclarations:
+          - UTTypeIdentifier: net.daringfireball.markdown
+            UTTypeDescription: Markdown Document
+            UTTypeConformsTo:
+              - public.plain-text
+            UTTypeTagSpecification:
+              public.filename-extension:
+                - md
+                - markdown
+                - mdown
+                - mkd
+                - mdwn
+                - mmd
+              public.mime-type:
+                - text/markdown
+                - text/x-markdown
+    dependencies:
+      - package: MarkdownRenderer
+        product: MarkdownRenderer
+      - target: QuickLookPreview
+      - target: QuickLookThumbnail
+
+  QuickLookThumbnail:
+    type: app-extension
+    platform: iOS
+    sources:
+      - Extensions/QuickLookThumbnail
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.hazzahex.MarkdownViewer.QuickLookThumbnail
+        GENERATE_INFOPLIST_FILE: NO
+    info:
+      path: Extensions/QuickLookThumbnail/Info.plist
+      properties:
+        CFBundleDisplayName: Markdown Thumbnail
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.quicklook.thumbnail
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).ThumbnailProvider
+          NSExtensionAttributes:
+            QLSupportedContentTypes:
+              - net.daringfireball.markdown
+
+  QuickLookPreview:
+    type: app-extension
+    platform: iOS
+    sources:
+      - Extensions/QuickLookPreview
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.hazzahex.MarkdownViewer.QuickLookPreview
+        GENERATE_INFOPLIST_FILE: NO
+    info:
+      path: Extensions/QuickLookPreview/Info.plist
+      properties:
+        CFBundleDisplayName: Markdown Preview
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.quicklook.preview
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).PreviewViewController
+          NSExtensionAttributes:
+            QLSupportedContentTypes:
+              - net.daringfireball.markdown
+            QLSupportsSearchableItems: false
+
+schemes:
+  MarkdownViewer:
+    build:
+      targets:
+        MarkdownViewer: all
+    run:
+      config: Debug
+    archive:
+      config: Release
