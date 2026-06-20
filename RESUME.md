@@ -1,5 +1,24 @@
 # Resume here — current state
 
+## ⏸️ PAUSED 2026-06-20 — waiting on a large, NON-RESUMABLE Finder copy to finish
+Before rebooting: the copy (~2,840 items → ~/Pictures, started ~12:10) is not
+resumable (no rsync). Wait for it to complete, THEN reboot for the thumbnail retest.
+`caffeinate -dimsu` left running to protect the copy from sleep.
+
+### First thing on resume: macOS thumbnail RETEST (the open question)
+My earlier "macOS preempts .md thumbnails" was PREMATURE (test had no reboot).
+PreviewMarkdown ships a working one, so it's likely achievable. Plan:
+1. Revive the macOS thumbnail extension (git history: added in 7e07571, removed in
+   f06b92d — `git show f06b92d` to recover Extensions/QuickLookThumbnailMac + project.yml).
+2. Try registering against an APP-OWNED exported UTI (not system `net.daringfireball.markdown`,
+   which is system/Xcode-declared here; `public.markdown` does NOT exist on macOS 27).
+3. REBOOT, then check the REAL Finder icon (not qlmanage -t / QLThumbnailGenerator — unreliable).
+4. If still failing while PreviewMarkdown works, match its UTI declarations.
+See memory `ios-quicklook-text-preview-limitation` for the full reasoning.
+
+---
+
+
 **Repo:** https://github.com/hazzahex/markdown-ios (private). Initial commit pushed
 to `main`. Deployment target iOS 18 (device on 27). Reader is the immersive
 iOS 26 DocumentGroup presentation (no nav bar by design).
