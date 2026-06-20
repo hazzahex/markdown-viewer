@@ -1,42 +1,7 @@
 import UIKit
 
-/// Minimal parse of the markdown into the few elements a thumbnail shows.
-/// Shared between the Thumbnail extension and the host app (for live preview).
-struct ThumbnailModel {
-    var title: String
-    var bodyLines: [String]
-
-    init(markdown: String) {
-        var title = ""
-        var body: [String] = []
-        for rawLine in markdown.components(separatedBy: .newlines) {
-            let line = rawLine.trimmingCharacters(in: .whitespaces)
-            if line.isEmpty { continue }
-            if title.isEmpty, line.hasPrefix("#") {
-                title = line.drop(while: { $0 == "#" }).trimmingCharacters(in: .whitespaces)
-                continue
-            }
-            if title.isEmpty {
-                title = ThumbnailModel.strip(line)
-                continue
-            }
-            body.append(ThumbnailModel.strip(line))
-            if body.count >= 6 { break }
-        }
-        self.title = title.isEmpty ? "Markdown" : title
-        self.bodyLines = body
-    }
-
-    /// Strip the most common inline markdown tokens for a clean preview line.
-    static func strip(_ s: String) -> String {
-        var out = s
-        for token in ["**", "*", "`", "~~", "#", ">"] {
-            out = out.replacingOccurrences(of: token, with: "")
-        }
-        return out.trimmingCharacters(in: .whitespaces)
-    }
-}
-
+// `ThumbnailModel` lives in ThumbnailModel.swift (shared with the macOS thumbnail
+// extension). This file is the iOS/UIKit drawing only.
 enum ThumbnailRenderer {
     static func draw(_ model: ThumbnailModel, in rect: CGRect) {
         guard let ctx = UIGraphicsGetCurrentContext() else { return }

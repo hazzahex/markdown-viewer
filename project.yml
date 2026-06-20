@@ -74,7 +74,6 @@ targets:
     dependencies:
       - package: MarkdownRenderer
         product: MarkdownRenderer
-      - target: QuickLookPreview
       - target: QuickLookThumbnail
 
   QuickLookThumbnail:
@@ -96,27 +95,6 @@ targets:
           NSExtensionAttributes:
             QLSupportedContentTypes:
               - net.daringfireball.markdown
-
-  QuickLookPreview:
-    type: app-extension
-    platform: iOS
-    sources:
-      - Extensions/QuickLookPreview
-    settings:
-      base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.hazzahex.MarkdownViewer.QuickLookPreview
-        GENERATE_INFOPLIST_FILE: NO
-    info:
-      path: Extensions/QuickLookPreview/Info.plist
-      properties:
-        CFBundleDisplayName: Markdown Preview
-        NSExtension:
-          NSExtensionPointIdentifier: com.apple.quicklook.preview
-          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).PreviewViewController
-          NSExtensionAttributes:
-            QLSupportedContentTypes:
-              - net.daringfireball.markdown
-            QLSupportsSearchableItems: false
 
   # ---- macOS ----
   MarkdownViewer-mac:
