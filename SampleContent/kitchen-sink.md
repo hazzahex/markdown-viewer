@@ -72,7 +72,7 @@ xcodegen generate && xcodebuild -scheme MarkdownViewer build
 
 ## Image
 
-![Placeholder](https://placehold.co/600x200/png)
+![Sample image](https://picsum.photos/600/200)
 
 ---
 
