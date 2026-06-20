@@ -1,5 +1,10 @@
 # Resume here — current state
 
+**Repo:** https://github.com/hazzahex/markdown-ios (private). Initial commit pushed
+to `main`. Deployment target iOS 18 (device on 27). Reader is the immersive
+iOS 26 DocumentGroup presentation (no nav bar by design).
+
+
 ## Done
 - **Spike 0 (complete):** iOS Files Quick Look PREVIEW extension for `.md` is
   architecturally impossible (text-conforming types always use the built-in
@@ -15,6 +20,15 @@
     alerts, blockquotes — all GitHub-faithful, dark-mode aware.
   - `Extensions/QuickLookThumbnail` (works on iOS), `Extensions/QuickLookPreview`
     (inert on iOS — kept for macOS).
+- **macOS (working, verified on this Mac):**
+  - `MarkdownViewer-mac` app (DocumentGroup reader) + `QuickLookPreviewMac`
+    extension (`Extensions/QuickLookPreviewMac/PreviewViewController.swift`,
+    AppKit `QLPreviewingController` hosting `MarkdownReaderView` via NSHostingView).
+  - **Finder spacebar / Quick Look renders full Markdown** (impossible on iOS) —
+    confirmed visually. Same shared engine as iOS.
+  - Build: `xcodebuild -scheme MarkdownViewer-mac -destination 'platform=macOS' -derivedDataPath build-mac build`.
+    Register for QL: `open -g <app>` then `pluginkit -a <app>/Contents/PlugIns/QuickLookPreviewMac.appex`.
+  - `screencapture` works for the agent now (Screen Recording granted to Terminal).
 
 ## Build/deploy (unchanged)
 ```sh

@@ -4,6 +4,7 @@ options:
   bundleIdPrefix: com.hazzahex
   deploymentTarget:
     iOS: "18.0"
+    macOS: "15.0"
   createIntermediateGroups: true
   groupSortPosition: top
 
@@ -117,11 +118,89 @@ targets:
               - net.daringfireball.markdown
             QLSupportsSearchableItems: false
 
+  # ---- macOS ----
+  MarkdownViewer-mac:
+    type: application
+    platform: macOS
+    sources:
+      - App/Sources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.hazzahex.MarkdownViewer
+        PRODUCT_NAME: MarkdownViewer
+        GENERATE_INFOPLIST_FILE: NO
+        ENABLE_HARDENED_RUNTIME: YES
+    info:
+      path: App/Info-macOS.plist
+      properties:
+        CFBundleDisplayName: Markdown Viewer
+        LSMinimumSystemVersion: "15.0"
+        CFBundleDocumentTypes:
+          - CFBundleTypeName: Markdown Document
+            CFBundleTypeRole: Viewer
+            LSHandlerRank: Alternate
+            LSItemContentTypes:
+              - net.daringfireball.markdown
+        UTImportedTypeDeclarations:
+          - UTTypeIdentifier: net.daringfireball.markdown
+            UTTypeDescription: Markdown Document
+            UTTypeConformsTo:
+              - public.plain-text
+            UTTypeTagSpecification:
+              public.filename-extension: [md, markdown, mdown, mkd, mdwn, mmd]
+              public.mime-type: [text/markdown, text/x-markdown]
+    entitlements:
+      path: App/MarkdownViewer-mac.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+        com.apple.security.files.user-selected.read-only: true
+    dependencies:
+      - package: MarkdownRenderer
+        product: MarkdownRenderer
+      - target: QuickLookPreviewMac
+
+  QuickLookPreviewMac:
+    type: app-extension
+    platform: macOS
+    sources:
+      - Extensions/QuickLookPreviewMac
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.hazzahex.MarkdownViewer.QuickLookPreviewMac
+        GENERATE_INFOPLIST_FILE: NO
+    info:
+      path: Extensions/QuickLookPreviewMac/Info.plist
+      properties:
+        CFBundleDisplayName: Markdown Preview
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.quicklook.preview
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).PreviewViewController
+          NSExtensionAttributes:
+            QLSupportedContentTypes:
+              - net.daringfireball.markdown
+            QLSupportsSearchableItems: false
+    entitlements:
+      path: Extensions/QuickLookPreviewMac/QuickLookPreviewMac.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+        com.apple.security.files.user-selected.read-only: true
+    dependencies:
+      - package: MarkdownRenderer
+        product: MarkdownRenderer
+
 schemes:
   MarkdownViewer:
     build:
       targets:
         MarkdownViewer: all
+    run:
+      config: Debug
+    archive:
+      config: Release
+  MarkdownViewer-mac:
+    build:
+      targets:
+        MarkdownViewer-mac: all
     run:
       config: Debug
     archive:
