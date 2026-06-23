@@ -28,11 +28,15 @@ targets:
       - App/Sources
       - path: SampleContent/kitchen-sink.md
         buildPhase: resources
+      - path: Design/MarkdownIcon.icon  # Icon Composer (.icon) — treat as one file
+        type: file
+        buildPhase: resources
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.hazzahex.MarkdownViewer
         GENERATE_INFOPLIST_FILE: NO
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        ASSETCATALOG_COMPILER_APPICON_NAME: MarkdownIcon
     info:
       path: App/Info.plist
       properties:
@@ -102,12 +106,16 @@ targets:
     platform: macOS
     sources:
       - App/Sources
+      - path: Design/MarkdownIcon.icon  # Icon Composer (.icon) — treat as one file
+        type: file
+        buildPhase: resources
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.hazzahex.MarkdownViewer
         PRODUCT_NAME: MarkdownViewer
         GENERATE_INFOPLIST_FILE: NO
         ENABLE_HARDENED_RUNTIME: YES
+        ASSETCATALOG_COMPILER_APPICON_NAME: MarkdownIcon
     info:
       path: App/Info-macOS.plist
       properties:

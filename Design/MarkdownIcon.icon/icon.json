@@ -1,0 +1,43 @@
+{
+  "fill" : {
+    "linear-gradient" : [
+      "extended-gray:0.25000,1.00000",
+      "extended-gray:0.00000,1.00000"
+    ]
+  },
+  "groups" : [
+    {
+      "layers" : [
+        {
+          "fill" : {
+            "solid" : "extended-gray:0.75000,1.00000"
+          },
+          "hidden" : false,
+          "image-name" : "Characters.svg",
+          "name" : "Characters",
+          "position" : {
+            "scale" : 3.6,
+            "translation-in-points" : [
+              28,
+              0
+            ]
+          }
+        }
+      ],
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.6
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.2
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "circles" : [
+      "watchOS"
+    ],
+    "squares" : "shared"
+  }
+}
