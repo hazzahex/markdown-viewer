@@ -1,99 +1,95 @@
 # Markdown Viewer
 
-Make Markdown feel like a **native filetype** on iOS, iPadOS, and macOS — rendered
-Quick Look previews, distinctive Finder/Files thumbnails, and a clean GitHub-styled
-reader — with almost no app UI of its own. No vault, no subscription: just open a
-`.md` and read it the way it was meant to look.
+Make Markdown feel like a **native filetype** on macOS — rendered Quick Look
+previews, distinctive Finder thumbnails, and a clean GitHub-styled reader. No
+vault, no subscription: press <kbd>Space</kbd> on a `.md` and read it the way it
+was meant to look.
 
-Built as a native SwiftUI app with a shared rendering engine and OS extensions.
+A native SwiftUI app with a shared rendering engine and Quick Look extensions.
 
-## What it does
+<p align="center">
+  <img src="docs/quicklook.png" width="49%" alt="Quick Look preview of a Markdown file">
+  <img src="docs/thumbnail.jpg" width="22%" alt="Finder thumbnail for a .md file">
+</p>
 
-| Surface | iOS / iPadOS | macOS |
-|---|---|---|
-| **Reader app** (open a `.md`, GitHub-styled) | ✅ | ✅ |
-| **Quick Look preview** (spacebar / Spotlight / Files) | ❌ *(see below)* | ✅ |
-| **Thumbnails** in Files / Finder | ✅ | ✅ |
+> Quick Look preview (spacebar / Spotlight) · Finder thumbnail
 
-Rendering covers GitHub-Flavored Markdown: headings, tables, task lists, blockquotes,
-fenced code with **syntax highlighting** (~190 languages), GitHub **alerts**
-(`> [!NOTE]`, `> [!WARNING]`, …), links, and images — all native SwiftUI, dark-mode
-aware, no WebView.
+## Install
 
-### The one platform quirk worth knowing
+**Requires macOS 15 or later.**
 
-On **iOS**, a third-party Quick Look *preview* extension is **never invoked for
-text-conforming types** like Markdown — iOS always uses its built-in text viewer.
-This is architectural (confirmed on-device, in Apple's docs/forums, and by an App
-Store validation rule). So on iOS we lean on **thumbnails + the reader app**; the
-full spacebar-preview magic lives on **macOS**, where that preemption isn't enforced.
-(macOS thumbnails, conversely, only register after a **reboot/relogin** — a Quick
-Look quirk the app's Setup window explains to users.)
+1. Download `MarkdownViewer-notarized.zip` from the
+   [latest release](https://github.com/hazzahex/markdown-viewer/releases/latest),
+   unzip, and drag **MarkdownViewer.app** to **/Applications**.
+   It's notarized and Developer-ID signed — no Gatekeeper warning.
+2. Open it once. A **Setup** window walks you through the rest:
+
+<p align="center"><img src="docs/setup.png" width="420" alt="Setup window"></p>
+
+3. **System Settings → General → Login Items & Extensions → Quick Look** →
+   enable **Markdown Preview** and **Markdown Thumbnail**.
+4. **Log out and back in (or restart)** — macOS only registers Quick Look
+   extensions at login, so previews/thumbnails won't appear until you do.
+
+Then press <kbd>Space</kbd> on any `.md` in Finder, or switch Finder to icon view
+to see thumbnails. There's also a standalone reader (open a `.md` with the app):
+
+<p align="center"><img src="docs/reader.png" width="640" alt="The reader window"></p>
+
+Rendering covers GitHub-Flavored Markdown: headings, tables, task lists,
+blockquotes, fenced code with **syntax highlighting** (~190 languages), GitHub
+**alerts** (`> [!NOTE]`, `> [!WARNING]`, …), links, and images — all native
+SwiftUI, dark-mode aware, no WebView.
+
+## A note on iOS
+
+The same codebase also builds an iOS/iPadOS app (a reader + Markdown thumbnails in
+Files). It isn't distributed here — and notably, iOS **never invokes third-party
+Quick Look *preview* extensions for text types** like Markdown (it always uses its
+built-in text viewer; this is architectural, confirmed on-device and in Apple's
+docs/forums). So the full spacebar-preview experience is **macOS only**, which is
+what this project ships. (macOS thumbnails, conversely, only register after a
+**reboot/relogin** — the quirk the Setup window explains.)
 
 ## Architecture
 
 ```
 project.yml                          # XcodeGen spec — source of truth for all targets
-App/Sources/                         # SwiftUI host app (iOS + macOS), DocumentGroup reader
-Packages/MarkdownRenderer/           # shared SPM engine (used by app + extensions)
+Packages/MarkdownRenderer/           # shared SwiftUI rendering engine (SPM)
   MarkdownReaderView                 #   MarkdownUI + Theme.gitHub
   CodeHighlighter                    #   Highlightr (highlight.js) syntax highlighting
   GitHubAlert                        #   [!NOTE]/[!WARNING]/… callouts
-  MarkdownDocument                   #   read-only FileDocument
+App/Sources/                         # SwiftUI host app (macOS + iOS), DocumentGroup reader
 Extensions/QuickLookPreviewMac/      # macOS Quick Look preview extension
-Extensions/QuickLookThumbnail/       # iOS thumbnail extension
-Extensions/QuickLookThumbnailMac/    # macOS thumbnail extension
-Distribution/                        # Developer ID export options (see Distribution/README.md)
+Extensions/QuickLookThumbnail*/      # thumbnail extensions (iOS + macOS)
 scripts/release-mac.sh               # archive → notarize → staple → zip
 ```
 
-The `.xcodeproj` is **generated** by [XcodeGen](https://github.com/yonaskolb/XcodeGen),
-not committed — `project.yml` is the source of truth.
+The rendering engine is shared by the app and every extension. The `.xcodeproj` is
+**generated** by [XcodeGen](https://github.com/yonaskolb/XcodeGen) from
+`project.yml`, not committed.
 
-## Build & run
+## Building from source
 
-**Prerequisites:** Xcode 26+ (built against Xcode 27 / the iOS 27 & macOS 27 SDKs),
-and `brew install xcodegen`.
-
-```sh
-xcodegen generate          # regenerate the .xcodeproj after editing project.yml
-```
-
-Build the macOS app:
+For contributors. Requires **Xcode 26+** (built against Xcode 27) and
+`brew install xcodegen`.
 
 ```sh
+xcodegen generate
 xcodebuild -project MarkdownViewer.xcodeproj -scheme MarkdownViewer-mac \
   -destination 'platform=macOS' build
 ```
 
-Build the iOS app (Simulator):
-
-```sh
-xcodebuild -project MarkdownViewer.xcodeproj -scheme MarkdownViewer \
-  -destination 'platform=iOS Simulator,name=iPhone 17' \
-  CODE_SIGNING_ALLOWED=NO build
-```
-
-> Forking this? You'll need to set your own **`DEVELOPMENT_TEAM`** and
-> **bundle identifier prefix** in `project.yml` (they're currently set to the
-> original author's). See `Distribution/README.md` for the macOS release flow.
-
-## Distribution
-
-The macOS app ships as a **notarized, Developer-ID-signed** download (not the App
-Store — which avoids the `QLSupportedContentTypes` system-UTI validation
-restriction). One command builds, notarizes, staples, and zips it:
-
-```sh
-scripts/release-mac.sh     # see Distribution/README.md for the one-time setup
-```
+Signed/notarized release builds use `scripts/release-mac.sh` — see
+[`Distribution/README.md`](Distribution/README.md). Contributors should set their
+own `DEVELOPMENT_TEAM` / bundle-identifier prefix in `project.yml`. See also
+[`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 ## Dependencies
 
-All MIT-licensed:
-- [MarkdownUI](https://github.com/gonzalezreal/swift-markdown-ui) — native SwiftUI rendering + GitHub theme
-- [Highlightr](https://github.com/raspu/Highlightr) — syntax highlighting (highlight.js)
-- (transitively: swift-cmark, NetworkImage)
+All MIT-licensed: [MarkdownUI](https://github.com/gonzalezreal/swift-markdown-ui)
+(native SwiftUI rendering + GitHub theme) and
+[Highlightr](https://github.com/raspu/Highlightr) (syntax highlighting).
 
 ## License
 
