@@ -113,6 +113,8 @@ targets:
       properties:
         CFBundleDisplayName: Markdown Viewer
         LSMinimumSystemVersion: "15.0"
+        ITSAppUsesNonExemptEncryption: false
+        LSApplicationCategoryType: public.app-category.utilities
         CFBundleDocumentTypes:
           - CFBundleTypeName: Markdown Document
             CFBundleTypeRole: Viewer
@@ -149,6 +151,7 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.hazzahex.MarkdownViewer.QuickLookThumbnailMac
         GENERATE_INFOPLIST_FILE: NO
+        ENABLE_HARDENED_RUNTIME: YES
     info:
       path: Extensions/QuickLookThumbnailMac/Info.plist
       properties:
@@ -174,6 +177,7 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.hazzahex.MarkdownViewer.QuickLookPreviewMac
         GENERATE_INFOPLIST_FILE: NO
+        ENABLE_HARDENED_RUNTIME: YES
     info:
       path: Extensions/QuickLookPreviewMac/Info.plist
       properties:
