@@ -137,6 +137,33 @@ targets:
       - package: MarkdownRenderer
         product: MarkdownRenderer
       - target: QuickLookPreviewMac
+      - target: QuickLookThumbnailMac
+
+  QuickLookThumbnailMac:
+    type: app-extension
+    platform: macOS
+    sources:
+      - Extensions/QuickLookThumbnailMac
+      - Extensions/QuickLookThumbnail/ThumbnailModel.swift  # shared parser
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.hazzahex.MarkdownViewer.QuickLookThumbnailMac
+        GENERATE_INFOPLIST_FILE: NO
+    info:
+      path: Extensions/QuickLookThumbnailMac/Info.plist
+      properties:
+        CFBundleDisplayName: Markdown Thumbnail
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.quicklook.thumbnail
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).ThumbnailProvider
+          NSExtensionAttributes:
+            QLSupportedContentTypes:
+              - net.daringfireball.markdown
+    entitlements:
+      path: Extensions/QuickLookThumbnailMac/QuickLookThumbnailMac.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+        com.apple.security.files.user-selected.read-only: true
 
   QuickLookPreviewMac:
     type: app-extension
