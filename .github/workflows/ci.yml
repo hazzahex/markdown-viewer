@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  # Validates that project.yml generates a well-formed Xcode project.
+  # Runs on any macOS runner (XcodeGen needs no Xcode/SDK), so it's a reliable gate.
+  generate:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install XcodeGen
+        run: brew install xcodegen
+      - name: Generate project
+        run: xcodegen generate
+      - name: Sanity-check schemes exist
+        run: xcodebuild -list -project MarkdownViewer.xcodeproj
+
+  # Full app build needs the Xcode 27 / iOS-27 & macOS-27 SDKs (e.g. the Icon
+  # Composer .icon format and defaultLaunchBehavior). GitHub runners may not have
+  # that yet — enable this once they do (and/or pin with maxim-lobanov/setup-xcode).
+  #
+  # build-macos:
+  #   runs-on: macos-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - run: brew install xcodegen && xcodegen generate
+  #     - run: |
+  #         xcodebuild -project MarkdownViewer.xcodeproj -scheme MarkdownViewer-mac \
+  #           -destination 'platform=macOS' CODE_SIGNING_ALLOWED=NO build
