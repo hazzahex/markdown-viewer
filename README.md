@@ -28,8 +28,7 @@ A native SwiftUI app with a shared rendering engine and Quick Look extensions.
 
 3. **System Settings → General → Login Items & Extensions → Quick Look** →
    enable **Markdown Preview** and **Markdown Thumbnail**.
-4. **Log out and back in (or restart)** — macOS only registers Quick Look
-   extensions at login, so previews/thumbnails won't appear until you do.
+4. (Optional fix) Sometimes Quick Look entries are not registered until after a log out and log in.
 
 Then press <kbd>Space</kbd> on any `.md` in Finder, or switch Finder to icon view
 to see thumbnails. There's also a standalone reader (open a `.md` with the app):
