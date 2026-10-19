@@ -55,8 +55,8 @@ what this project ships. (macOS thumbnails, conversely, only register after a
 ```
 project.yml                          # XcodeGen spec — source of truth for all targets
 Packages/MarkdownRenderer/           # shared SwiftUI rendering engine (SPM)
-  MarkdownReaderView                 #   MarkdownUI + Theme.gitHub
-  CodeHighlighter                    #   Highlightr (highlight.js) syntax highlighting
+  MarkdownReaderView                 #   Textual StructuredText + GitHub style (cross-block selection)
+  TaskListMarkers                    #   - [ ] / - [x] task-list items
   GitHubAlert                        #   [!NOTE]/[!WARNING]/… callouts
 App/Sources/                         # SwiftUI host app (macOS + iOS), DocumentGroup reader
 Extensions/QuickLookPreviewMac/      # macOS Quick Look preview extension
@@ -86,9 +86,9 @@ own `DEVELOPMENT_TEAM` / bundle-identifier prefix in `project.yml`. See also
 
 ## Dependencies
 
-All MIT-licensed: [MarkdownUI](https://github.com/gonzalezreal/swift-markdown-ui)
-(native SwiftUI rendering + GitHub theme) and
-[Highlightr](https://github.com/raspu/Highlightr) (syntax highlighting).
+[Textual](https://github.com/gonzalezreal/textual) (MIT): native SwiftUI
+rendering, GitHub style, Prism-based syntax highlighting, and text selection
+that spans the whole document.
 
 ## License
 

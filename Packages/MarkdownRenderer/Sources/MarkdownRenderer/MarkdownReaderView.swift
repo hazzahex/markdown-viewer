@@ -1,15 +1,19 @@
 import SwiftUI
-import MarkdownUI
+import Textual
 
 /// The shared reading surface: GitHub-styled, natively rendered markdown.
 /// Used by the host app's document reader (and, on macOS, the Quick Look
-/// preview extension). Rendering is native SwiftUI (MarkdownUI), not a WebView.
+/// preview extension). Rendering is native SwiftUI (Textual), not a WebView.
+///
+/// Textual is used over MarkdownUI because its `StructuredText` supports a
+/// single selection spanning every block (headings, paragraphs, lists, tables).
+/// MarkdownUI renders each block as a separate `Text`, and SwiftUI's
+/// `.textSelection` can't select across `Text` views.
 public struct MarkdownReaderView: View {
-    @Environment(\.colorScheme) private var colorScheme
     private let segments: [MarkdownSegment]
 
     public init(_ markdown: String) {
-        self.segments = MarkdownSegment.parse(markdown)
+        self.segments = MarkdownSegment.parse(TaskListMarkers.replace(in: markdown))
     }
 
     public var body: some View {
@@ -18,24 +22,20 @@ public struct MarkdownReaderView: View {
                 ForEach(Array(segments.enumerated()), id: \.offset) { _, segment in
                     switch segment {
                     case .markdown(let text):
-                        styled(Markdown(text))
+                        StructuredText(markdown: text)
                     case .alert(let kind, let body):
-                        GitHubAlertView(kind: kind, text: body) { styled(Markdown($0)) }
+                        GitHubAlertView(kind: kind, text: body) { StructuredText(markdown: $0) }
                     }
                 }
             }
-            .textSelection(.enabled)
+            .font(.system(size: 16))
+            .textual.structuredTextStyle(.gitHub)
+            .textual.textSelection(.enabled)
             .padding(16)
             .frame(maxWidth: 760, alignment: .leading)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .background(Color.markdownPage)
-    }
-
-    private func styled(_ markdown: Markdown) -> some View {
-        markdown
-            .markdownTheme(.gitHub)
-            .markdownCodeSyntaxHighlighter(.gitHub(colorScheme: colorScheme))
     }
 }
 

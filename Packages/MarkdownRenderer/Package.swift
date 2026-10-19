@@ -8,15 +8,13 @@ let package = Package(
         .library(name: "MarkdownRenderer", targets: ["MarkdownRenderer"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/gonzalezreal/swift-markdown-ui", from: "2.4.0"),
-        .package(url: "https://github.com/raspu/Highlightr", from: "2.2.0"),
+        .package(url: "https://github.com/gonzalezreal/textual", from: "0.5.0"),
     ],
     targets: [
         .target(
             name: "MarkdownRenderer",
             dependencies: [
-                .product(name: "MarkdownUI", package: "swift-markdown-ui"),
-                .product(name: "Highlightr", package: "Highlightr"),
+                .product(name: "Textual", package: "textual"),
             ]
         ),
     ],
