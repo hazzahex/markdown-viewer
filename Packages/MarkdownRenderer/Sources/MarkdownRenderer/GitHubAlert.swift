@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// GitHub-flavored alert/admonition kinds (`> [!NOTE]`, `> [!WARNING]`, …).
-/// MarkdownUI doesn't render these natively, so we detect them and draw a
+/// Textual doesn't render these natively, so we detect them and draw a
 /// GitHub-style callout (icon + colored left bar + colored title).
 enum AlertKind: String, CaseIterable {
     case note, tip, important, warning, caution
