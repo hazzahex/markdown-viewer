@@ -63,12 +63,24 @@ struct GitHubAlertView<Content: View>: View {
 }
 
 extension Color {
-    /// GitHub-like reading background (white in light, near-black in dark).
+    /// Reading background. Must match `Theme.gitHub`'s text background, which
+    /// MarkdownUI paints behind the rendered blocks — otherwise the content
+    /// column shows up as a differently-colored panel inside the page.
     static var markdownPage: Color {
         #if canImport(UIKit)
-        Color(uiColor: .systemBackground)
+        Color(uiColor: UIColor { traits in
+            traits.userInterfaceStyle == .dark ? githubDark : .white
+        })
         #else
-        Color(nsColor: .textBackgroundColor)
+        Color(nsColor: NSColor(name: nil) { appearance in
+            appearance.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua ? githubDark : .white
+        })
         #endif
     }
+
+    #if canImport(UIKit)
+    private static let githubDark = UIColor(red: 0x18 / 255, green: 0x19 / 255, blue: 0x1D / 255, alpha: 1)
+    #else
+    private static let githubDark = NSColor(srgbRed: 0x18 / 255, green: 0x19 / 255, blue: 0x1D / 255, alpha: 1)
+    #endif
 }
